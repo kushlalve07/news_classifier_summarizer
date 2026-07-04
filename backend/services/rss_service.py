@@ -1,6 +1,10 @@
 import feedparser
 import re
 from dataclasses import dataclass
+from datetime import datetime, timezone
+import time as time_module
+import email.utils
+from typing import Optional
 
 # ── Topic Feeds ──────────────────────────────────────────────────
 TOPIC_FEEDS = {
@@ -65,6 +69,8 @@ class Article:
     category: str = ""
     summary: str = ""
     is_regional: bool = False   # flag so UI can show a 📍 badge
+    published: str = "" 
+    city: Optional[str] = None
 
 def clean_html(text):
     return re.sub('<.*?>', '', text or "").strip()
@@ -102,16 +108,56 @@ def _parse_feed(url, source_name, category="", is_regional=False, limit=8):
             title = clean_html(entry.get("title", ""))
             description = clean_html(entry.get("summary", ""))
             link = entry.get("link", "")
+            published = entry.get("published", "")
+
             if not title or not link:
                 continue
+
+            # ── Skip anything older than 72 hours ──
+            if not _is_within_72h(published):
+                continue
+
             results.append(Article(
                 title=title,
                 description=description[:300],
                 link=link,
                 source=source_name,
                 category=category,
-                is_regional=is_regional
+                is_regional=is_regional,
+                published=published
             ))
     except Exception as e:
         print(f"⚠️  Failed to fetch {source_name}: {e}")
     return results
+
+def _parse_date(date_str: str) -> Optional[datetime]:
+    """Parse RSS date strings into timezone-aware datetime."""
+    if not date_str:
+        return None
+    try:
+        # Try email.utils first (handles RFC 2822 like RSS uses)
+        # e.g. "Sat, 04 Jul 2026 05:46:22 +0000"
+        parsed = email.utils.parsedate_to_datetime(date_str)
+        return parsed
+    except Exception:
+        pass
+    try:
+        # Try ISO format e.g. "2026-07-04T10:38:21+05:30"
+        return datetime.fromisoformat(date_str)
+    except Exception:
+        return None
+
+def _is_within_72h(date_str: str) -> bool:
+    """Returns True if article was published within last 24 hours."""
+    parsed = _parse_date(date_str)
+    if not parsed:
+        return True  # if we can't parse the date, keep the article
+
+    now = datetime.now(timezone.utc)
+
+    # Make sure parsed is timezone-aware for comparison
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+
+    diff_hours = (now - parsed).total_seconds() / 3600
+    return diff_hours <= 72
