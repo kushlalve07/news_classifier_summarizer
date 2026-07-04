@@ -2,7 +2,7 @@ import { useState } from "react";
 import { savePreferences } from "../services/api";
 
 const TOPICS = ["Sports", "Technology", "Business", "Entertainment", "World", "India", "Environment"];
-const CITIES = ["None", "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad", "Chandigarh", "Jaipur", "Lucknow", "Nagpur"];
+const CITIES = ["None", "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Lucknow"];
 
 export default function PreferencesModal({ currentPrefs, userId, onSave, onClose }) {
     const [selectedTopics, setSelectedTopics] = useState(currentPrefs?.topics || []);
