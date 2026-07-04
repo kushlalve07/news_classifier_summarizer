@@ -22,8 +22,8 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "https://news-app-frontend-jet-ten.vercel.app/" 
+        "https://news-app-frontend-jet-ten.vercel.app",
+        "http://localhost:5173"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -91,6 +91,10 @@ def login(req: LoginRequest):
     return {"user_id": user[0], "username": user[1]}
 
 # ── Preferences routes ────────────────────────────────
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/preferences/save")
 def save_prefs(req: PreferencesRequest):
     save_preferences(req.user_id, req.topics, [], req.city)
