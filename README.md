@@ -18,7 +18,7 @@
 
 ## 📌 What It Does
 
-InBrief aggregates live news from 30+ Indian RSS sources, classifies each article into a category, generates a 2-line AI summary, and serves a personalised feed based on each user's topic and city preferences — all within seconds thanks to a shared article cache.
+Samachar aggregates recent news (upto last 72hrs) from 20+ Indian RSS sources, classifies each article into a category, generates a 2-line AI summary, and serves a personalised feed based on each user's topic and city preferences — all within seconds thanks to a shared article cache.
 
 - 🔐 User registration and login with bcrypt password hashing
 - 🗂️ Personalised topic selection (Sports, Tech, Business, Politics, Entertainment, World, Science)
