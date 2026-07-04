@@ -21,8 +21,11 @@ app = FastAPI()
 # Allow React frontend to talk to FastAPI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,  
+    allow_origins=[
+        "http://localhost:5173",
+        "https://news-app-frontend-jet-ten.vercel.app/" 
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
