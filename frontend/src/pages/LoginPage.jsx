@@ -14,8 +14,8 @@ export default function LoginPage({ onLogin }) {
             <div style={styles.card}>
                 {/* Header */}
                 <div style={styles.header}>
-                    <h1 style={styles.title}>📰 Daily Brief</h1>
-                    <p style={styles.subtitle}>Your personalised Indian news feed</p>
+                    <h1 style={styles.title}>📰 Samachar</h1>
+                    <p style={styles.subtitle}>Your personalised news feed</p>
                 </div>
 
                 {/* Tab switcher */}

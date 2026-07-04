@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFeed } from "../services/api";
 import NewsCard from "../components/NewsCard";
+import PreferencesModal from "../components/PreferencesModal";
+import { getPreferences } from "../services/api";
 
 const ALL_TABS = ["All", "Sports", "Technology", "Business", "Entertainment", "World", "India", "Environment", "Regional"];
 
@@ -35,9 +37,22 @@ export default function DashboardPage({ onLogout }) {
     const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
+    const [showPrefsModal, setShowPrefsModal] = useState(false);
+    const [currentPrefs, setCurrentPrefs] = useState(null);
 
     useEffect(() => {
-        loadFeed();
+        const loadData = async () => {
+            // Load current preferences for the modal
+            try {
+                const res = await getPreferences(user.user_id);
+                setCurrentPrefs(res.data);
+            } catch (e) {
+                console.error("Could not load preferences");
+            }
+            // Load feed
+            loadFeed();
+        };
+        loadData();
     }, []);
 
     const loadFeed = async () => {
@@ -68,7 +83,7 @@ export default function DashboardPage({ onLogout }) {
     };
 
     const handleEditPrefs = () => {
-        alert("Edit preferences coming soon!");
+        setShowPrefsModal(true);
     };
 
     // Filter by active tab + search query
@@ -89,11 +104,19 @@ export default function DashboardPage({ onLogout }) {
         tab === "All" || articles.some(a => a.category === tab)
     );
 
+    const handlePrefsSaved = (newTopics, newCity) => {
+        setCurrentPrefs({ topics: newTopics, city: newCity });
+        setShowPrefsModal(false);
+        // Clear articles so feed reloads with new preferences
+        setArticles([]);
+        loadFeed();
+    };
+
     return (
         <div style={styles.page}>
             {/* ── Navbar ── */}
             <nav style={styles.navbar}>
-                <span style={styles.logo}>📰 Daily Brief</span>
+                <span style={styles.logo}>📰 Samachar</span>
                 <div style={styles.navRight}>
                     <span style={styles.welcomeText}>👤 {user?.username}</span>
                     <button style={styles.navBtn} onClick={handleEditPrefs}>
@@ -164,6 +187,15 @@ export default function DashboardPage({ onLogout }) {
                     </div>
                 )}
             </div>
+            {/* ── Preferences Modal ── */}
+            {showPrefsModal && (
+                <PreferencesModal
+                    currentPrefs={currentPrefs}
+                    userId={user.user_id}
+                    onSave={handlePrefsSaved}
+                    onClose={() => setShowPrefsModal(false)}
+                />
+            )}
         </div>
     );
 }
