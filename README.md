@@ -82,7 +82,7 @@ cache_meta     — meta_id, last_refreshed
 
 ## ⚡ Caching Strategy
 
-Instead of calling Groq per user per login, InBrief uses a **shared article cache**:
+Instead of calling Groq per user per login, Samachar uses a **shared article cache**:
 
 ```
 Every 3 hours:
@@ -154,7 +154,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-inbrief/
+Samachar/
 ├── backend/
 │   ├── main.py                 # FastAPI app + all routes
 │   ├── config.py               # env variable loader
@@ -211,12 +211,6 @@ VITE_API_URL=https://your-render-url.onrender.com
 | RSS Parsing | feedparser |
 | Auth | bcrypt password hashing |
 | Deployment | Vercel (frontend), Render (backend) |
-
----
-
-## 📄 License
-
-MIT — feel free to fork and build on top of this.
 
 ---
 
